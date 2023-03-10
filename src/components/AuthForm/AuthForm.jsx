@@ -13,7 +13,7 @@ export function AuthForm ({ method }) {
     rememberSession: false
   })
 
-  const { jwt, login } = useAuth()
+  const { login, authError } = useAuth()
 
   const emailId = useId()
   const passwordId = useId()
@@ -43,10 +43,8 @@ export function AuthForm ({ method }) {
   return (
     <main>
       <h1 className='form-title'>Welcome to Hex!</h1>
-      <p>{JSON.stringify(jwt)}</p>
       <form className='auth-form' onSubmit={handleFormSubmit}>
         <h2>{title}</h2>
-
         <label htmlFor={emailId} className='input-field--label'>Email</label>
         <div className='input-field--container'>
           <input
@@ -59,7 +57,6 @@ export function AuthForm ({ method }) {
             onChange={handleFormChange}
           />
         </div>
-
         <label htmlFor={passwordId} className='input-field--label'>Password</label>
         <div className='input-field--container'>
           <input
@@ -88,8 +85,8 @@ export function AuthForm ({ method }) {
               <label htmlFor={rememberSessionId}>Remember me</label>
             </div>
         }
+        {authError && <p className='error-message'>{authError}</p>}
         <button onClick={handleFormSubmit}>{title}</button>
-
         <footer className='auth-form--footer'>
           <small>Forgot Password?</small>
           <small>

@@ -1,30 +1,33 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
 import { SessionContext } from '../context/SessionContext'
 
 export function useAuth () {
   const { jwt, setJwt } = useContext(SessionContext)
+  const [authError, setAuthError] = useState()
 
   const login = async ({ email, password, rememberSession }) => {
     const requestOptions = {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email, password })
     }
 
-    const response = await (await fetch('https://api.escuelajs.co/api/v1/auth/login', requestOptions)).json()
+    const response = await (await fetch('http://localhost:3002/auth/login', requestOptions)).json()
+
+    if (response.exception) {
+      setAuthError(response.message)
+    }
 
     setJwt(response.access_token)
-
-    rememberSession
-      ? document.cookie = `refresh=${response.refresh_token}`
-      : window.sessionStorage.setItem('access_token', response.access_token)
   }
 
   return {
     jwt,
     setJwt,
-    login
+    login,
+    authError
   }
 }
